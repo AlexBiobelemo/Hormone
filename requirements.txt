@@ -1,5 +1,5 @@
-streamlit
 google-generativeai
-fpdf2
+python-docx
+fpdf
 python-pptx
 Pillow
