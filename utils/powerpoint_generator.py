@@ -1,5 +1,11 @@
-from pptx import Presentation
-from pptx.util import Inches, Pt
+try:
+    from pptx import Presentation
+    from pptx.util import Inches, Pt
+    PPTX_AVAILABLE = True
+except ImportError:
+    PPTX_AVAILABLE = False
+    print("Warning: python-pptx not installed. PowerPoint export will not be available.")
+
 from datetime import datetime
 
 class PowerpointGenerator:
