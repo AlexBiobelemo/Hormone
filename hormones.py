@@ -181,49 +181,56 @@ with tab2:
                         content = response.text
                         
                         # Create PDF
-                        pdf = FPDF(format='A4')
-                        pdf.set_margin(20)  # Add margins to prevent text overflow
-                        pdf.add_page()
-                        pdf.set_auto_page_break(auto=True, margin=15)
-                        
-                        # Title
-                        pdf.set_font("Helvetica", "B", 16)  # Switched to Helvetica for better compatibility in fpdf2
-                        pdf.cell(0, 10, "Hormonal Profile Test Research Report", ln=True, align="C")
-                        pdf.ln(5)
-                        
-                        # Topic
-                        pdf.set_font("Helvetica", "B", 14)
-                        pdf.multi_cell(0, 10, f"Topic: {pdf_topic}")
-                        pdf.ln(2)
-                        
-                        # Metadata
-                        pdf.set_font("Helvetica", "I", 10)
-                        pdf.cell(0, 8, f"Generated: {datetime.now().strftime('%B %d, %Y at %H:%M')}", ln=True)
-                        pdf.cell(0, 8, f"Detail Level: {detail_level}", ln=True)
-                        pdf.ln(5)
-                        
-                        # Content
-                        pdf.set_font("Helvetica", "", 11)
-                        
-                        # Process content line by line
-                        for line in content.split('\n'):
-                            if line.strip():
-                                if line.startswith('#'):
-                                    # Headers
-                                    pdf.ln(3)
-                                    header_size = 12 - (line.count('#') * 1)  # Adjust size based on header level
-                                    pdf.set_font("Helvetica", "B", max(8, header_size))
-                                    pdf.multi_cell(170, 6, line.strip(), align='L')
-                                    pdf.set_font("Helvetica", "", 11)
-                                    pdf.ln(2)
-                                elif line.startswith('*') or line.startswith('-'):
-                                    # Bullet points
-                                    pdf.multi_cell(170, 6, f"  • {line.lstrip('*- ').strip()}", align='L')
-                                else:
-                                    #Regular Text
-                                    pdf.multi_cell(170, 8, text, align='L')
-                            else:
-                                pdf.ln(3)
+                        # Create PDF with A4 format
+						pdf = FPDF(format='A4')
+						pdf.add_page()
+						pdf.set_auto_page_break(auto=True, margin=15)
+						pdf.set_margin(20)  # Set larger margins
+						
+						# Title
+						title_text = "Hormonal Profile Test Research Report"
+						pdf.set_font("Helvetica", "B", 16)
+						title_w = pdf.get_string_width(title_text)
+						pdf.set_x((210 - title_w) / 2)
+						pdf.cell(title_w, 10, title_text, ln=True, align="C")
+						pdf.ln(5)
+						
+						# Topic
+						pdf.set_font("Helvetica", "B", 14)
+						pdf.multi_cell(0, 10, f"Topic: {pdf_topic}")
+						pdf.ln(2)
+						
+						# Metadata
+						pdf.set_font("Helvetica", "I", 10)
+						pdf.cell(0, 8, f"Generated: {datetime.now().strftime('%B %d, %Y at %H:%M')}", ln=True)
+						pdf.cell(0, 8, f"Detail Level: {detail_level}", ln=True)
+						pdf.ln(5)
+						
+						# Content
+						pdf.set_font("Helvetica", "", 11)
+						
+						# Process content line by line
+						for line in content.split('\n'):
+						    if line.strip():
+						        current_text = line.strip()
+						        if line.startswith('#'):
+						            # Headers
+						            pdf.ln(3)
+						            header_size = 12 - (line.count('#') * 1)  # Adjust size based on header level
+						            pdf.set_font("Helvetica", "B", max(8, header_size))
+						            header_text = current_text.lstrip('# ')
+						            pdf.multi_cell(170, 8, header_text, align='L')  # Set specific width and left alignment
+						            pdf.set_font("Helvetica", "", 11)
+						            pdf.ln(2)
+						        elif line.startswith('*') or line.startswith('-'):
+						            # Bullet points
+						            bullet_text = f"  • {current_text.lstrip('*- ')}"
+						            pdf.multi_cell(170, 6, bullet_text, align='L')  # Set specific width and left alignment
+						        else:
+						            # Regular text
+						            pdf.multi_cell(170, 6, current_text, align='L')  # Set specific width and left alignment
+						    else:
+						        pdf.ln(3)
                         
                         # Footer
                         pdf.ln(10)
