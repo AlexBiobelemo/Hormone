@@ -133,7 +133,7 @@ with tab1:
             with st.chat_message("assistant"):
                 with st.spinner("Researching..."):
                     try:
-                        model = genai.GenerativeModel('gemini-2.5-flash')
+                        model = genai.GenerativeModel('gemini-1.5-flash-latest')  # Updated to latest stable free-tier model as of 2025
                         full_prompt = f"{SYSTEM_PROMPT}\n\nUser Question: {prompt}"
                         response = model.generate_content(full_prompt)
                         st.markdown(response.text)
@@ -166,7 +166,7 @@ with tab2:
             if pdf_topic:
                 with st.spinner("Generating comprehensive research report..."):
                     try:
-                        model = genai.GenerativeModel('gemini-2.5-flash')
+                        model = genai.GenerativeModel('gemini-1.5-flash-latest')  # Updated to latest stable free-tier model as of 2025
                         
                         # Generate content based on detail level
                         detail_instructions = {
@@ -175,7 +175,7 @@ with tab2:
                             "Summary": "Provide a concise summary with essential information about the topic. Include: Key Points, Testing Basics, and Clinical Relevance."
                         }
                         
-                        prompt = f"{SYSTEM_PROMPT}\n\nCreate a detailed research report on: {pdf_topic}\n\n{detail_instructions[detail_level]}\n\nFormat the response with clear sections and subsections."
+                        prompt = f"{SYSTEM_PROMPT}\n\nCreate a detailed research report on: {pdf_topic}\n\n{detail_instructions[detail_level]}\n\nFormat the response with clear sections and subsections using markdown. Use ASCII characters only for bullets (e.g., - or *) to ensure PDF compatibility."
                         
                         response = model.generate_content(prompt)
                         content = response.text
@@ -186,23 +186,23 @@ with tab2:
                         pdf.set_auto_page_break(auto=True, margin=15)
                         
                         # Title
-                        pdf.set_font("Arial", "B", 16)
+                        pdf.set_font("Helvetica", "B", 16)  # Switched to Helvetica for better compatibility in fpdf2
                         pdf.cell(0, 10, "Hormonal Profile Test Research Report", ln=True, align="C")
                         pdf.ln(5)
                         
                         # Topic
-                        pdf.set_font("Arial", "B", 14)
+                        pdf.set_font("Helvetica", "B", 14)
                         pdf.multi_cell(0, 10, f"Topic: {pdf_topic}")
                         pdf.ln(2)
                         
                         # Metadata
-                        pdf.set_font("Arial", "I", 10)
+                        pdf.set_font("Helvetica", "I", 10)
                         pdf.cell(0, 8, f"Generated: {datetime.now().strftime('%B %d, %Y at %H:%M')}", ln=True)
                         pdf.cell(0, 8, f"Detail Level: {detail_level}", ln=True)
                         pdf.ln(5)
                         
                         # Content
-                        pdf.set_font("Arial", "", 11)
+                        pdf.set_font("Helvetica", "", 11)
                         
                         # Process content line by line
                         for line in content.split('\n'):
@@ -210,26 +210,27 @@ with tab2:
                                 if line.startswith('#'):
                                     # Headers
                                     pdf.ln(3)
-                                    pdf.set_font("Arial", "B", 12)
-                                    pdf.multi_cell(0, 8, line.replace('#', '').strip())
-                                    pdf.set_font("Arial", "", 11)
+                                    header_size = 12 - (line.count('#') * 1)  # Adjust size based on header level
+                                    pdf.set_font("Helvetica", "B", max(8, header_size))
+                                    pdf.multi_cell(0, 8, line.lstrip('# ').strip())
+                                    pdf.set_font("Helvetica", "", 11)
                                     pdf.ln(2)
                                 elif line.startswith('*') or line.startswith('-'):
                                     # Bullet points
-                                    pdf.multi_cell(0, 6, f"  • {line[1:].strip()}")
+                                    pdf.multi_cell(0, 6, f"  - {line.lstrip('*- ').strip()}")  # Use ASCII dash for bullets
                                 else:
                                     # Regular text
-                                    pdf.multi_cell(0, 6, line)
+                                    pdf.multi_cell(0, 6, line.strip())
                             else:
                                 pdf.ln(3)
                         
                         # Footer
                         pdf.ln(10)
-                        pdf.set_font("Arial", "I", 9)
+                        pdf.set_font("Helvetica", "I", 9)
                         pdf.multi_cell(0, 5, "Disclaimer: This report is for educational and research purposes only. Always consult qualified healthcare professionals for medical advice, diagnosis, or treatment.")
                         
-                        # Save PDF to bytes
-                        pdf_output = pdf.output(dest='S').encode('latin-1')
+                        # Save PDF to bytes (using fpdf2's bytes output)
+                        pdf_output = pdf.output()
                         
                         st.success("✅ PDF generated successfully!")
                         st.download_button(
@@ -268,7 +269,7 @@ with tab3:
             if ppt_topic:
                 with st.spinner("Creating professional presentation..."):
                     try:
-                        model = genai.GenerativeModel('gemini-2.5-flash')
+                        model = genai.GenerativeModel('gemini-1.5-flash-latest')  # Updated to latest stable free-tier model as of 2025
                         
                         # Generate structured content for slides
                         prompt = f"""{SYSTEM_PROMPT}
@@ -316,7 +317,7 @@ Ensure content is medically accurate, clinically relevant, and professionally pr
                                 current_slide = {"title": title, "bullets": []}
                             elif line.startswith('-') or line.startswith('•'):
                                 if current_slide:
-                                    current_slide["bullets"].append(line[1:].strip())
+                                    current_slide["bullets"].append(line.lstrip('-• ').strip())
                         
                         if current_slide:
                             slides_data.append(current_slide)
