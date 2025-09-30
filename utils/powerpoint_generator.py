@@ -1,8 +1,6 @@
 from pptx import Presentation
 from pptx.util import Inches, Pt
-from pptx.enum.text import PP_ALIGN
 from datetime import datetime
-import io
 
 class PowerpointGenerator:
     def __init__(self, topic):
@@ -35,22 +33,20 @@ class PowerpointGenerator:
             p.font.size = Pt(18)
 
     def generate_powerpoint(self, slides_data, output_path="research_presentation.pptx"):
-        prs = Presentation()
-        prs.slide_width = Inches(10)
-        prs.slide_height = Inches(7.5)
+        try:
+            prs = Presentation()
+            prs.slide_width = Inches(10)
+            prs.slide_height = Inches(7.5)
 
-        self.create_title_slide(prs)
+            self.create_title_slide(prs)
 
-        for slide_data in slides_data:
-            self.create_content_slide(prs, slide_data["title"], slide_data["bullets"])
+            for slide_data in slides_data:
+                self.create_content_slide(prs, slide_data["title"], slide_data["bullets"])
 
-        # Save PowerPoint to bytes
-        ppt_bytes = io.BytesIO()
-        prs.save(ppt_bytes)
-        ppt_bytes.seek(0)
-
-        with open(output_path, 'wb') as f:
-            f.write(ppt_bytes.read())
-
-        return output_path
-
+            # Save directly to file
+            prs.save(output_path)
+            return output_path
+            
+        except Exception as e:
+            print(f"Error generating PowerPoint: {str(e)}")
+            raise
