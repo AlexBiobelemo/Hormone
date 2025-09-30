@@ -133,7 +133,7 @@ with tab1:
             with st.chat_message("assistant"):
                 with st.spinner("Researching..."):
                     try:
-                        model = genai.GenerativeModel('gemini-pro')
+                        model = genai.GenerativeModel('gemini-2.5-flash')
                         full_prompt = f"{SYSTEM_PROMPT}\n\nUser Question: {prompt}"
                         response = model.generate_content(full_prompt)
                         st.markdown(response.text)
@@ -166,7 +166,7 @@ with tab2:
             if pdf_topic:
                 with st.spinner("Generating comprehensive research report..."):
                     try:
-                        model = genai.GenerativeModel('gemini-pro')
+                        model = genai.GenerativeModel('gemini-2.5-flash')
                         
                         # Generate content based on detail level
                         detail_instructions = {
@@ -268,7 +268,7 @@ with tab3:
             if ppt_topic:
                 with st.spinner("Creating professional presentation..."):
                     try:
-                        model = genai.GenerativeModel('gemini-pro')
+                        model = genai.GenerativeModel('gemini-2.5-flash')
                         
                         # Generate structured content for slides
                         prompt = f"""{SYSTEM_PROMPT}
