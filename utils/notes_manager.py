@@ -1,7 +1,13 @@
 import os
-from docx import Document
 from fpdf import FPDF
 from datetime import datetime
+
+try:
+    from docx import Document
+    DOCX_AVAILABLE = True
+except ImportError:
+    DOCX_AVAILABLE = False
+    print("Warning: python-docx not installed. DOCX export will not be available.")
 
 class NotesManager:
     def __init__(self, filepath="research_notes.txt"):
