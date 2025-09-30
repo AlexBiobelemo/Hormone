@@ -181,7 +181,8 @@ with tab2:
                         content = response.text
                         
                         # Create PDF
-                        pdf = FPDF()
+                        pdf = FPDF(format='A4')
+                        pdf.set_margin(20)  # Add margins to prevent text overflow
                         pdf.add_page()
                         pdf.set_auto_page_break(auto=True, margin=15)
                         
@@ -212,15 +213,15 @@ with tab2:
                                     pdf.ln(3)
                                     header_size = 12 - (line.count('#') * 1)  # Adjust size based on header level
                                     pdf.set_font("Helvetica", "B", max(8, header_size))
-                                    pdf.multi_cell(0, 8, line.lstrip('# ').strip())
+                                    pdf.multi_cell(170, 6, line.strip(), align='L')
                                     pdf.set_font("Helvetica", "", 11)
                                     pdf.ln(2)
                                 elif line.startswith('*') or line.startswith('-'):
                                     # Bullet points
-                                    pdf.multi_cell(0, 6, f"  - {line.lstrip('*- ').strip()}")  # Use ASCII dash for bullets
+                                    pdf.multi_cell(170, 6, f"  • {line.lstrip('*- ').strip()}", align='L')
                                 else:
-                                    # Regular text
-                                    pdf.multi_cell(0, 6, line.strip())
+                                    #Regular Text
+                                    pdf.multi_cell(170, 8, text, align='L')
                             else:
                                 pdf.ln(3)
                         
