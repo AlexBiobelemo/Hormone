@@ -9,17 +9,17 @@ class ResearchGenerator:
         self.system_prompt = system_prompt
         genai.configure(api_key=self.api_key)
 
-    def generate_section(self, section_name):
 
-        # Note: The suggested model 'gemini-2.5-flash' is not a valid model name.
-        # Reverting to the original 'gemini-1.5-flash' which is a valid and current model.
+    def generate_section(self, section_name):
         model = genai.GenerativeModel('gemini-1.5-flash')
         try:
-        prompt = f"{self.system_prompt}\n\nCreate a {section_name} for a research report on the topic: {self.topic}. Keywords: {self.keywords}. Research questions: {self.research_questions}"
-        response = model.generate_content(prompt)
-        return response.text
+            prompt = f"{self.system_prompt}\n\nCreate a {section_name} for a research report on the topic: {self.topic}. Keywords: {self.keywords}. Research questions: {self.research_questions}"
+            response = model.generate_content(prompt)
+            return response.text
         except Exception as e:
             return f"Error generating {section_name}: {str(e)}"
+
+
 
     def generate_report(self):
         introduction = self.generate_section("introduction")
