@@ -1,5 +1,6 @@
 google-generativeai
 python-docx
 fpdf
+fpdf2
 python-pptx
 Pillow
